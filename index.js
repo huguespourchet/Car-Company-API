@@ -13,6 +13,10 @@ const paymentsRoutes = require("./routes/payments.route");
 const postsRoutes = require("./routes/posts.route");
 const models = require('./models');
 
+//ADD Swagger Modules
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
+
 //ADD MODELS
 const Post = require("./services/posts.service");
 const Comment = require("./services/comments.service");
@@ -55,6 +59,24 @@ app.use(function(req, res, next) {
 
 //later (this is a middleware)
 app.use(bodyParser.json());
+
+//Initialisation de Swagger
+const swaggerOption = {
+    swaggerDefinition: (swaggerJsdoc.Options = {
+        info: {
+            title: "MYSQL EXPRESS",
+            description: "API documentation",
+            contact: {
+                name: "Hugues Pourchet",
+            },
+            servers: [`http://localhost:${process.env.PORT}/`],
+        },
+    }),
+    apis: ["index.js", "./routes/*.js"],
+};
+
+const swaggerDocs = swaggerJsdoc(swaggerOption);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use("/customers",customersRoutes);
 app.use("/employees",employeesRoutes);
